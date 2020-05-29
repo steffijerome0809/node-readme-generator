@@ -6,11 +6,6 @@ inquirer
   .prompt([
     {
       type: "input",
-      name: "github_username",
-      message: "Enter your GitHub username:",
-    },
-    {
-      type: "input",
       name: "projectTitle",
       message: "What is your Project Title?",
     },
@@ -33,73 +28,46 @@ inquirer
       type: "list",
       name: "license",
       message: "What is your license ?",
-      choices: [
-        "GNU AGPLv3",
-        "GNU GPLv3",
-        "GNU LGPLv3",
-        "Mozilla Public 2.0",
-        "Apache 2.0",
-        "MIT",
-        "Boost Software 1.0",
-        "The Unlicense",
-        "None",
-      ],
+      choices: ["Mozilla Public 2.0", "Apache 2.0", "MIT", "None"],
     },
     {
-      type: "input",
+      type: "list",
       name: "contributors",
       message: "Who are your Contributors ?",
+      choices: ["Steffi Jerome"],
     },
     {
       type: "input",
       name: "tests",
-      message: "What are your Tests ?",
+      message: "What command should be run to run your tests ?",
     },
     {
       type: "input",
-      name: "questions",
-      message: "What are your Questions?",
-    },
-    {
-      type: "input",
-      name: "picture",
-      message: "What is your User Github Profile Picture?",
-    },
-    {
-      type: "input",
-      name: "email",
-      message: "What is your User Github Email?",
+      name: "github_username",
+      message: "Enter your GitHub username:",
     },
   ])
   .then(function (answers) {
     const {
-      github_username,
       projectTitle,
       description,
-      // tableofcontents,
       install,
       usage,
       license,
       contributors,
       tests,
-      questions,
-      picture,
-      email,
+      github_username,
     } = answers;
 
     init(
-      github_username,
       projectTitle,
       description,
-      // tableofcontents,
       install,
       usage,
       license,
       contributors,
       tests,
-      questions,
-      picture,
-      email
+      github_username
     );
   });
 function createFile(fileContent) {
@@ -113,23 +81,17 @@ function createFile(fileContent) {
 }
 
 function init(
-  github_username,
   projectTitle,
   description,
-  //tableofcontents,
   install,
   usage,
   license,
   contributors,
   tests,
-  questions,
-  picture,
-  email
+  github_username
 ) {
-  //writeToFile("# README Generator");
   let readmefile = "";
-
-  //createFile(readmefile);
+  createFile(readmefile);
 
   let badge = createBadge("npm", "6.14.5");
   console.log(badge);
@@ -137,7 +99,7 @@ function init(
   readmefile = `${badge}`;
   fs.appendFile(
     "READMENEW.md",
-    "\n" + "# README Genarator" + "\n\n" + readmefile + "\n",
+    "\n" + "# Badge" + "\n\n" + readmefile + "\n",
     (err) => {
       if (err) {
         console.log(err);
@@ -151,7 +113,7 @@ function init(
 
   fs.appendFile(
     "READMENEW.md",
-    "\n" + "## Project Title" + "\r\n" + projectTitle + "\r\r\n",
+    "\n" + "\r\n" + "#" + " " + projectTitle + " " + "&middot;" + "\r\r\n",
     (err) => {
       if (err) {
         console.log(err);
@@ -182,7 +144,7 @@ function init(
     license,
     contributors,
     tests,
-    questions
+    github_username
   );
   //console.log("check", readmefile);
 
@@ -197,7 +159,15 @@ function init(
   // // how to install
   fs.appendFile(
     "READMENEW.md",
-    "\n" + "## Install" + "\r\n" + install + "\n",
+    "\n" +
+      "## Install" +
+      "\r\n" +
+      "```sh" +
+      "\n" +
+      install +
+      "\n" +
+      "```" +
+      "\n",
     (err) => {
       if (err) {
         console.log(err);
@@ -257,19 +227,6 @@ function init(
     }
   );
 
-  //   // // what are the questions
-  fs.appendFile(
-    "READMENEW.md",
-    "\n" + "## Questions" + "\n\n" + questions + "\n",
-    (err) => {
-      if (err) {
-        console.log(err);
-      } else {
-        console.log("Success");
-      }
-    }
-  );
-
   github_username.trim();
 
   if (github_username !== "") {
@@ -278,26 +235,23 @@ function init(
     axios.get(github_query).then(function (github_userdata) {
       //user profile image:
       let gitHubProfileImage = getProfileImage(github_userdata);
-      // what is your github profile pic
-      fs.appendFile(
-        "READMENEW.md",
-        "\n" + "## Github Profile" + "\n\n" + gitHubProfileImage + "\n",
-        (err) => {
-          if (err) {
-            console.log(err);
-          } else {
-            console.log("Success");
-          }
-        }
-      );
 
       //user email address:
       let gitHubEmail = getEmailAddress(github_userdata);
-      // // what is your github email
 
       fs.appendFile(
         "READMENEW.md",
-        "\n" + "## Github Email" + "\n\n" + gitHubEmail + "\n",
+        "\n" +
+          "## Questions" +
+          "\n\n" +
+          "\n" +
+          "![GitHub Profile Image]" +
+          "(" +
+          gitHubProfileImage +
+          ")" +
+          " " +
+          gitHubEmail +
+          "\n",
         (err) => {
           if (err) {
             console.log(err);
@@ -320,7 +274,7 @@ function setUpTableOfContents(
   license,
   contributors,
   tests,
-  questions
+  github_username
 ) {
   let table_of_contents = [];
 
@@ -344,7 +298,7 @@ function setUpTableOfContents(
     table_of_contents.push(`* [Tests](#tests)`);
   }
 
-  if (questions !== "") {
+  if (github_username !== "") {
     table_of_contents.push(`* [Questions](#questions) \r\n`);
   }
 
